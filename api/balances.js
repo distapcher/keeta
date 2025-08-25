@@ -1,13 +1,16 @@
 import { ethers } from "ethers";
 
+// Контракт Keeta ($KTA) на Base
 const KTA_CONTRACT = "0xc0634090F2Fe6c6d75e61Be2b949464aBB498973";
-// Используем публичный Base RPC без заголовков для теста
 const BASE_RPC_URL = "https://developer.base.org/v2/rpc";
 
+// Минимальный ABI ERC20
 const ERC20_ABI = [
-  "function balanceOf(address) view returns (uint256)",
-  "function decimals() view returns (uint8)"
+  "function balanceOf(address) view returns (uint256)"
 ];
+
+// Известное количество знаков после запятой у Keeta
+const DECIMALS = 4;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -24,15 +27,12 @@ export default async function handler(req, res) {
   try {
     const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
     const contract = new ethers.Contract(KTA_CONTRACT, ERC20_ABI, provider);
-    const decimals = await contract.decimals();
-    console.log("Decimals:", decimals);
 
     const results = [];
     for (const address of addresses) {
       try {
         const raw = await contract.balanceOf(address);
-        // используем ethers.formatUnits для точности
-        const balance = ethers.formatUnits(raw, decimals);
+        const balance = ethers.formatUnits(raw, DECIMALS); // точный баланс
         results.push({ address, balance: balance.toString() });
         console.log(`Баланс ${address}:`, balance.toString());
       } catch (innerErr) {
@@ -42,9 +42,10 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json(results);
+
   } catch (err) {
-    console.error("Общая ошибка:", err.message);
-    // fallback: тестовые значения, чтобы фронтенд не висел
+    console.error("Общая ошибка API:", err.message);
+    // fallback: тестовые значения для фронтенда
     const fallbackResults = addresses.map(addr => ({
       address: addr,
       balance: (Math.random() * 1000).toFixed(4)
