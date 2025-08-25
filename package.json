@@ -1,7 +1,7 @@
 {
   "name": "keeta-balances",
   "version": "1.0.0",
-  "description": "Проект для отображения точных балансов Keeta ($KTA) через BASE REST API",
+  "description": "Проект для отображения точных балансов Keeta ($KTA) через BaseScan API",
   "main": "api/balances.js",
   "scripts": {
     "start": "vercel dev"
