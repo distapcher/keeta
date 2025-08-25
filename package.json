@@ -1,7 +1,13 @@
 {
-  "name": "keeta-analyzer",
+  "name": "keeta-balances",
   "version": "1.0.0",
+  "description": "Минимальный проект с фронтендом и серверной функцией для Vercel",
+  "main": "api/balances.js",
   "scripts": {
     "start": "vercel dev"
-  }
+  },
+  "dependencies": {
+    "node-fetch": "^3.4.1"
+  },
+  "type": "module"
 }
