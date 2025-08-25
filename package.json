@@ -1,11 +1,13 @@
 {
   "name": "keeta-balances",
   "version": "1.0.0",
-  "description": "Минимальный проект с фронтендом и серверной функцией для Vercel",
+  "description": "Проект для отображения балансов Keeta ($KTA) через BASE API",
   "main": "api/balances.js",
   "scripts": {
     "start": "vercel dev"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ethers": "^6.9.0"
+  },
   "type": "module"
 }
