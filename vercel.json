@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/**/*.js", "use": "@vercel/node" },
-    { "src": "public/**/*", "use": "@vercel/static" }
-  ],
+  "public": true,
+  "functions": {
+    "api/balances.js": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 10
+    }
+  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/public/index.html" }
   ]
 }
