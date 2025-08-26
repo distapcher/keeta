@@ -1,9 +1,18 @@
 {
-  "name": "my-keeta-app",
+  "name": "keeta-balance-checker",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "description": "Keeta token balance checker for Base blockchain",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node api/index.js"
+  },
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }

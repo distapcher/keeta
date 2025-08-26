@@ -1,58 +1,404 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Keeta Analyzer</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    textarea { width: 100%; height: 150px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    button { margin-top: 10px; padding: 10px 20px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keeta Token Balance Checker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .input-section {
+            margin-bottom: 40px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .address-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .address-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .analyze-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            min-width: 200px;
+        }
+
+        .analyze-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .analyze-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 30px 0;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            margin-top: 40px;
+        }
+
+        .results-header {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .results-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .results-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .address-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            max-width: 300px;
+        }
+
+        .balance-cell {
+            font-weight: 600;
+            color: #2d5016;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #a00;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .contract-info {
+            background: #f8f9ff;
+            border: 2px solid #e1e7ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .contract-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .contract-info p {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+
+            .address-cell {
+                max-width: 200px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Keeta Token Analyzer</h1>
-  <p>Введите адреса кошельков (каждый с новой строки):</p>
-  <textarea id="addresses"></textarea><br>
-  <button onclick="analyze()">Анализ</button>
+    <div class="container">
+        <div class="header">
+            <h1>🪙 Keeta Balance Checker</h1>
+            <p>Проверьте балансы токенов Keeta для множественных кошельков в сети Base</p>
+        </div>
 
-  <table id="result" style="display:none;">
-    <thead>
-      <tr><th>Адрес</th><th>Баланс (KTA)</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+        <div class="contract-info">
+            <h3>Информация о токене:</h3>
+            <p><strong>Контракт Keeta:</strong> 0xc0634090F2Fe6c6d75e61Be2b949464aBB498973</p>
+            <p><strong>Сеть:</strong> Base</p>
+        </div>
 
-  <script>
-    async function analyze() {
-      const textarea = document.getElementById("addresses");
-      const addresses = textarea.value.split("\n").map(a => a.trim()).filter(a => a);
+        <div class="input-section">
+            <label class="input-label" for="addresses">
+                Введите адреса кошельков (по одному в каждой строке):
+            </label>
+            <textarea 
+                id="addresses" 
+                class="address-textarea" 
+                placeholder="0x1234567890123456789012345678901234567890&#10;0xabcdefabcdefabcdefabcdefabcdefabcdefabcd&#10;0x..."
+            ></textarea>
+        </div>
 
-      if (addresses.length === 0) {
-        alert("Введите хотя бы один адрес!");
-        return;
-      }
+        <button id="analyzeBtn" class="analyze-button">
+            🔍 Анализировать балансы
+        </button>
 
-      const response = await fetch("/api/balances", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ addresses })
-      });
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Получение данных о балансах...</p>
+        </div>
 
-      const data = await response.json();
-      const table = document.getElementById("result");
-      const tbody = table.querySelector("tbody");
-      tbody.innerHTML = "";
+        <div id="error" class="error" style="display: none;"></div>
 
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row.address}</td><td>${row.balance}</td>`;
-        tbody.appendChild(tr);
-      });
+        <div id="results" class="results-section" style="display: none;">
+            <h2 class="results-header">Результаты анализа:</h2>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
 
-      table.style.display = "table";
-    }
-  </script>
+    <script>
+        const addressesTextarea = document.getElementById('addresses');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const resultsDiv = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        }
+
+        function hideError() {
+            errorDiv.style.display = 'none';
+        }
+
+        function showLoading() {
+            loadingDiv.style.display = 'block';
+            analyzeBtn.disabled = true;
+            hideError();
+        }
+
+        function hideLoading() {
+            loadingDiv.style.display = 'none';
+            analyzeBtn.disabled = false;
+        }
+
+        function displayResults(data) {
+            if (!data.results || data.results.length === 0) {
+                resultsContent.innerHTML = '<div class="empty-state">Нет данных для отображения</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'results-table';
+
+            // Заголовок таблицы
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>№</th>
+                    <th>Адрес кошелька</th>
+                    <th>Баланс KEETA</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            // Тело таблицы
+            const tbody = document.createElement('tbody');
+            data.results.forEach((result, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="address-cell">${result.address}</td>
+                    <td class="balance-cell">${result.formattedBalance} KEETA</td>
+                `;
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+
+            resultsContent.innerHTML = '';
+            resultsContent.appendChild(table);
+            resultsDiv.style.display = 'block';
+        }
+
+        async function analyzeBalances() {
+            const addressText = addressesTextarea.value.trim();
+            
+            if (!addressText) {
+                showError('Пожалуйста, введите хотя бы один адрес кошелька');
+                return;
+            }
+
+            const addresses = addressText
+                .split('\n')
+                .map(addr => addr.trim())
+                .filter(addr => addr);
+
+            if (addresses.length === 0) {
+                showError('Не найдено валидных адресов');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ addresses })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Произошла ошибка при получении данных');
+                }
+
+                displayResults(data);
+            } catch (error) {
+                showError('Ошибка: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Обработчики событий
+        analyzeBtn.addEventListener('click', analyzeBalances);
+
+        addressesTextarea.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeBalances();
+            }
+        });
+
+        // Автоматическая очистка ошибок при вводе
+        addressesTextarea.addEventListener('input', hideError);
+    </script>
 </body>
 </html>
