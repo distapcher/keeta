@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
 
     const API_KEY = process.env.BASESCAN_API_KEY;
     if (!API_KEY) {
-      return res.status(500).json({ error: "API ключ не найден. Проверь переменные окружения." });
+      return res.status(500).json({ error: "API ключ не найден. Проверь .env.local и настройки Vercel" });
     }
 
     const CONTRACT = "0xc0634090F2Fe6c6d75e61Be2b949464aBB498973"; // Keeta
@@ -47,7 +47,6 @@ module.exports = async (req, res) => {
         results.push({ address, balance: "Ошибка API: " + err.message });
       }
 
-      // задержка, чтобы не словить rate limit
       if (i < addresses.length - 1) {
         await delay(600);
       }
