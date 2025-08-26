@@ -15,9 +15,7 @@ module.exports = async (req, res) => {
   }
 
   const API_KEY = process.env.BASESCAN_API_KEY;
-  if (!API_KEY) {
-    return res.status(500).json({ error: "API ключ не найден" });
-  }
+  if (!API_KEY) return res.status(500).json({ error: "API ключ не найден" });
 
   const CONTRACT = "0xc0634090F2Fe6c6d75e61Be2b949464aBB498973"; // Keeta
   const DECIMALS = 18;
@@ -45,10 +43,8 @@ module.exports = async (req, res) => {
       results.push({ address, balance: "Ошибка API: " + err.message });
     }
 
-    if (i < addresses.length - 1) {
-      await delay(600); // задержка между запросами
-    }
+    if (i < addresses.length - 1) await delay(600); // задержка
   }
 
-  return res.status(200).json(results);
+  res.status(200).json(results);
 };
