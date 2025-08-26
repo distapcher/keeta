@@ -1,5 +1,3 @@
-const fetch = require("node-fetch");
-
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Метод не разрешен" });
@@ -10,7 +8,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: "Нужен список адресов" });
   }
 
-  // Пример ответа с заглушкой
+  // Заглушка: баланс 0 для всех
   const results = addresses.map(addr => ({ address: addr, balance: "0.0000" }));
 
   res.status(200).json(results);
