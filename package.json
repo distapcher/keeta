@@ -1,12 +1,8 @@
 {
-  "name": "keeta-balances",
+  "name": "my-keeta-app",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": ">=18"
-  },
-  "scripts": {
-    "start": "vercel dev",
-    "build": "echo \"no build step\""
+  "dependencies": {
+    "node-fetch": "^2.6.7"
   }
 }
